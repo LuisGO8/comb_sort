@@ -10,11 +10,22 @@ aux = variable temporal para intercambiar
 
 EXPLICACION DEL ALGORITMO: https://www.youtube.com/watch?v=DX-dXwtIGa0
 
+
+
+PARA REALIZAR LAS PRUEBAS
+int n = 1000000;
+int A[n];
+
+for(int i = 0; i<n; i++){
+    A[i] = rand() % 1000000
+}
+
 */
 
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include <time.h>
 
 typedef struct{
     uint64_t cmp;
@@ -47,17 +58,31 @@ sort comb_sort(int *A, int n){
 }
 
 int main(){
-    int A[] = {40,28,23,5,5,17,80};
     int n = 7;
+    int A[] = {40,28,23,5,5,17,80};
+
+    
+    printf("Arreglo desordenado: \n");
+    for(int i = 0; i < n; i++){
+        printf("%d,", A[i]);
+    }
+
+    clock_t inicio = clock();
 
     sort s = comb_sort(A,n);
 
+    clock_t fin = clock();
+    double tiempo = (double)(fin-inicio) / CLOCKS_PER_SEC;
+
+
+    printf("\nArreglo ordenado: \n");
     for (int i = 0; i < n; i++){
-        printf("%d", A[i]);
+        printf("%d,", A[i]);
     }
 
-    printf("\n Comparaciones: %llu\n", s.cmp);
-    printf("\n Movimientos: %llu\n", s.mov);
+    printf("\nTiempo de ejecucion: %.10f segundos", tiempo);
+    printf("\nComparaciones: %llu", s.cmp);
+    printf("\nMovimientos: %llu", s.mov);
 
     return 0;
 }
