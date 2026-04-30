@@ -1,5 +1,5 @@
 /*
-CODIGO DE: https://fvcalderan.github.io/myworks/articles/comb_sort.pdf
+CODIGO EXTRAIDO DE: https://fvcalderan.github.io/myworks/articles/comb_sort.pdf
 
 cmp = comparaciones
 mov = movimientos/intercambios 
