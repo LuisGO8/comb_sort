@@ -23,66 +23,85 @@ for(int i = 0; i<n; i++){
 */
 
 #include <stdio.h>
-#include <stdint.h>
-#include <math.h>
+#include <stdlib.h>
 #include <time.h>
+#include <stdint.h>
 
-typedef struct{
+typedef struct {
     uint64_t cmp;
     uint64_t mov;
 } sort;
 
-sort comb_sort(int *A, int n){
-    int sorted = 0, gap = n, i , sm, aux;
-    sort s = {.cmp = 0, .mov = 0};
+sort comb_sort(int *A, int n) {
+    
+    const double factor = 1.3;
+    int gap = n;
+    int swapped = 1;
+    sort s = {0, 0};
 
-    while(!sorted){
-        gap = (int)floor(gap/1.3);
-        if(gap <= 1){
-            gap = 1;
-            sorted = 1;
-        }
+    while (gap > 1 || swapped) {
+         gap = (int)(gap / factor);
+        if (gap < 1) gap = 1;
+        
+        swapped = 0;
 
-        for(i = 0; i < n - gap; i++){
-            sm = gap + i;
-            if(s.cmp++, A[i] > A[sm]){
-                aux = A[sm];
-                A[sm] = A[i];
-                A[i] = aux;
+         for (int i = 0; i < n - gap; i++) {
+            s.cmp++;
+            if (*(A + i) > *(A + i + gap)) {
+                int aux = *(A + i);
+                *(A + i) = *(A + i + gap);
+                *(A + i + gap) = aux;
+                
                 s.mov += 3;
-                sorted = 0;
+                swapped = 1;
             }
         }
     }
     return s;
 }
 
-int main(){
-    int n = 7;
-    int A[] = {40,28,23,5,5,17,80};
-
-    
-    printf("Arreglo desordenado: \n");
-    for(int i = 0; i < n; i++){
-        printf("%d,", A[i]);
+int *nuevoArr(int orden) {
+    int *ptr = (int *)malloc(orden * sizeof(int));
+    if (ptr == NULL) {
+        fprintf(stderr, "Error de memoria\n");
+        exit(1);
     }
+    for (int i = 0; i < orden; i++)
+        *(ptr + i) = (rand() % 200000) + 1;
+    return ptr;
+}
 
-    clock_t inicio = clock();
-
-    sort s = comb_sort(A,n);
-
-    clock_t fin = clock();
-    double tiempo = (double)(fin-inicio) / CLOCKS_PER_SEC;
-
-
-    printf("\nArreglo ordenado: \n");
-    for (int i = 0; i < n; i++){
-        printf("%d,", A[i]);
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Uso: %s <tamaño_de_lista>\n", argv[0]);
+        return 1;
     }
+    srand(time(NULL));
+    int orden = atoi(argv[1]);
 
-    printf("\nTiempo de ejecucion: %.10f segundos", tiempo);
-    printf("\nComparaciones: %llu", s.cmp);
-    printf("\nMovimientos: %llu", s.mov);
+        int *ptr = nuevoArr(orden);
+        
+        printf("Valores generados...\n");
+        for (int i = 0; i < orden; i++)
+            printf("%6d ", *(ptr+i));
+        
 
+        clock_t inicio = clock();
+        sort s = comb_sort(ptr, orden);
+        clock_t fin = clock();
+
+        
+        printf("\nValores ordenados...\n");
+        for (int i = 0; i < orden; i++)
+            printf("%6d ", *(ptr+i));
+        
+        double tiempo = (double)(fin - inicio) / CLOCKS_PER_SEC;
+
+        printf("\n\nResultados para %d elementos:", orden);
+        printf("\nTiempo: %.6f s", tiempo);
+        printf("\nComparaciones: %llu", (unsigned long long)s.cmp);
+        printf("\nMovimientos: %llu\n", (unsigned long long)s.mov);
+
+        free(ptr);
     return 0;
 }
